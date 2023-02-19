@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+- Incremental score calculator (with relative scores)
+- First Fit Decreasing
+- Early Pick: first feasible
+- Strip unused stations (leave 1)
+- Late Acceptance
+- EarlyLateChangeMoveFilter
+- NearbySelection (both change and swap moves)
+- Best score optimal, max 30 sec
+-->
+<solver>
+  <!-- Domain model configuration -->
+  <solutionClass>se.ltu.alb.salbp.model.AssemblyPlan</solutionClass>
+  <entityClass>se.ltu.alb.salbp.model.Step</entityClass>
+
+  <moveThreadCount>NONE</moveThreadCount>
+
+  <!-- Score configuration -->
+  <scoreDirectorFactory>
+    <incrementalScoreCalculatorClass>se.ltu.alb.salbp1.score.IncrementalCalculator</incrementalScoreCalculatorClass>
+    <incrementalScoreCalculatorCustomProperties>
+        <property name="lowerBoundMarginFactor" value="1.1" />
+    </incrementalScoreCalculatorCustomProperties>
+  </scoreDirectorFactory>
+
+  <!-- Global termination -->
+  <termination>
+    <secondsSpentLimit>30</secondsSpentLimit>
+    <bestScoreLimit>0hard/0medium/*soft</bestScoreLimit>
+  </termination>
+
+  <!-- Algorithms / phases -->
+
+  <constructionHeuristic>
+    <constructionHeuristicType>FIRST_FIT_DECREASING</constructionHeuristicType>
+    <forager>
+      <pickEarlyType>FIRST_FEASIBLE_SCORE</pickEarlyType>
+    </forager>
+  </constructionHeuristic>
+
+  <customPhase>
+    <customPhaseCommandClass>se.ltu.alb.salbp.algo.StripUnusedStations</customPhaseCommandClass>
+    <customProperties>
+      <property name="leave" value="1" />
+    </customProperties>
+  </customPhase>
+
+  <localSearch>
+    <localSearchType>LATE_ACCEPTANCE</localSearchType>
+    <unionMoveSelector>
+      <changeMoveSelector>
+        <entitySelector id="taskSel" />
+        <valueSelector>
+          <nearbySelection>
+            <originEntitySelector mimicSelectorRef="taskSel" />
+            <nearbyDistanceMeterClass>se.ltu.alb.salbp.algo.TaskStationDistance</nearbyDistanceMeterClass>
+            <parabolicDistributionSizeMaximum>300</parabolicDistributionSizeMaximum>
+          </nearbySelection>
+        </valueSelector>
+        <filterClass>se.ltu.alb.salbp.algo.EarlyLateChangeMoveFilter</filterClass>
+      </changeMoveSelector>
+      <swapMoveSelector>
+        <entitySelector id="taskSel2" />
+        <secondaryEntitySelector>
+          <nearbySelection>
+            <originEntitySelector mimicSelectorRef="taskSel2" />
+            <nearbyDistanceMeterClass>se.ltu.alb.salbp.algo.TaskTaskDistance</nearbyDistanceMeterClass>
+            <linearDistributionSizeMaximum>160</linearDistributionSizeMaximum>
+          </nearbySelection>
+        </secondaryEntitySelector>
+      </swapMoveSelector>
+    </unionMoveSelector>
+  </localSearch>
+
+</solver>

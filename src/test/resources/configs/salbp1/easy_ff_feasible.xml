@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Easy score calculator
+First Fit
+Hill Climbing
+best score feasible, max 10 sec
+
+Intended for testing on easy/small problems
+-->
+<solver>
+  <!-- Domain model configuration -->
+  <solutionClass>se.ltu.alb.salbp.model.AssemblyPlan</solutionClass>
+  <entityClass>se.ltu.alb.salbp.model.Step</entityClass>
+
+  <!-- Score configuration -->
+  <scoreDirectorFactory>
+    <easyScoreCalculatorClass>se.ltu.alb.salbp1.score.HardSoftInline</easyScoreCalculatorClass>
+  </scoreDirectorFactory>
+
+  <!-- Global termination -->
+  <termination>
+    <secondsSpentLimit>10</secondsSpentLimit>
+    <bestScoreFeasible>true</bestScoreFeasible>
+  </termination>
+
+  <!-- Algorithms / phases -->
+
+  <constructionHeuristic>
+    <constructionHeuristicType>FIRST_FIT</constructionHeuristicType>
+  </constructionHeuristic>
+
+  <localSearch>
+    <localSearchType>HILL_CLIMBING</localSearchType>
+  </localSearch>
+
+</solver>

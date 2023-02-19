@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+This is the naive/bare-bones config for SALBP-1.
+Uses no clever optimizations.
+NOTE: is supposed to use m=n stations (one per task)
+This cannot be configured from the outside but must be hard-coded.
+-->
+<solver>
+  <!-- Domain model configuration -->
+  <solutionClass>se.ltu.alb.salbp.model.AssemblyPlan</solutionClass>
+  <entityClass>se.ltu.alb.salbp.model.Step</entityClass>
+
+  <!-- Score configuration -->
+  <scoreDirectorFactory>
+    <easyScoreCalculatorClass>se.ltu.alb.salbp1.score.HardSoftInline</easyScoreCalculatorClass>
+  </scoreDirectorFactory>
+
+  <!-- Global termination -->
+  <termination>
+    <minutesSpentLimit>1</minutesSpentLimit>
+    <secondsSpentLimit>0</secondsSpentLimit>
+  </termination>
+
+  <!-- Algorithms / phases -->
+
+  <constructionHeuristic>
+    <constructionHeuristicType>FIRST_FIT</constructionHeuristicType>
+  </constructionHeuristic>
+
+  <localSearch>
+    <localSearchType>HILL_CLIMBING</localSearchType>
+  </localSearch>
+
+</solver>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Easy score calculator
+First Fit (equivalent)
+Hill Climbing
+Best score feasible, max 30 seconds
+-->
+<solver>
+  <!-- Domain model configuration -->
+  <solutionClass>se.ltu.alb.equip.model.AssemblyPlan</solutionClass>
+  <entityClass>se.ltu.alb.equip.model.Task</entityClass>
+  <entityClass>se.ltu.alb.equip.model.Equipment</entityClass>
+
+  <!-- Score configuration -->
+  <scoreDirectorFactory>
+    <easyScoreCalculatorClass>se.ltu.alb.equip.score.HardMediumSoftInline</easyScoreCalculatorClass>
+    <easyScoreCalculatorCustomProperties>
+      <property name="dualMode" value="false" />
+    </easyScoreCalculatorCustomProperties>
+  </scoreDirectorFactory>
+
+  <!-- Global termination -->
+  <termination>
+    <secondsSpentLimit>30</secondsSpentLimit>
+    <bestScoreFeasible>true</bestScoreFeasible>
+  </termination>
+
+  <!-- Algorithms / phases -->
+
+  <constructionHeuristic>
+    <queuedEntityPlacer>
+      <entitySelector id="placerEntitySelector">
+        <entityClass>se.ltu.alb.equip.model.Task</entityClass>
+        <cacheType>PHASE</cacheType>
+        <selectionOrder>SHUFFLED</selectionOrder>
+      </entitySelector>
+      <changeMoveSelector>
+        <entitySelector mimicSelectorRef="placerEntitySelector"/>
+      </changeMoveSelector>
+    </queuedEntityPlacer>
+  </constructionHeuristic>
+
+  <!--
+  <customPhase>
+    <customPhaseCommandClass>se.ltu.alb.equip.algo.ShowWorkingSolution</customPhaseCommandClass>
+    <customProperties>
+      <property name="brief" value="true" />
+    </customProperties>
+  </customPhase>
+  -->
+
+  <localSearch>
+    <localSearchType>HILL_CLIMBING</localSearchType>
+    <unionMoveSelector>
+      <changeMoveSelector>
+        <entitySelector id="taskSelector1">
+          <entityClass>se.ltu.alb.equip.model.Task</entityClass>
+          <cacheType>PHASE</cacheType>
+        </entitySelector>
+      </changeMoveSelector>
+      <swapMoveSelector>
+        <entitySelector mimicSelectorRef="taskSelector1"/>
+      </swapMoveSelector>
+    </unionMoveSelector>
+  </localSearch>
+
+</solver>

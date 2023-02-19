@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+- Incremental score calculator (dual mode)
+- First Fit Decreasing (equivalent)
+- Initializing score trend: only down
+- Show Working Solution (brief)
+- Check Feasibility (verbose, assert)
+- Late Acceptance
+- EarlyLate change move filter
+- Nearby selection (both change and swap moves)
+- Unimproved limit 0.5 seconds, max 10 seconds
+-->
+<solver>
+  <!-- Domain model configuration -->
+  <solutionClass>se.ltu.alb.equip.model.AssemblyPlan</solutionClass>
+  <entityClass>se.ltu.alb.equip.model.Task</entityClass>
+  <entityClass>se.ltu.alb.equip.model.Equipment</entityClass>
+
+  <moveThreadCount>NONE</moveThreadCount>
+
+  <!-- Score configuration -->
+  <scoreDirectorFactory>
+    <incrementalScoreCalculatorClass>se.ltu.alb.equip2.score.IncrementalType2</incrementalScoreCalculatorClass>
+    <incrementalScoreCalculatorCustomProperties>
+      <property name="dualMode" value="true" />
+      <property name="ctFactor" value="2.00" />
+    </incrementalScoreCalculatorCustomProperties>
+    <initializingScoreTrend>ONLY_DOWN</initializingScoreTrend>
+  </scoreDirectorFactory>
+
+  <!-- Global termination -->
+  <termination>
+    <secondsSpentLimit>10</secondsSpentLimit>
+    <unimprovedMillisecondsSpentLimit>500</unimprovedMillisecondsSpentLimit>
+    <unimprovedScoreDifferenceThreshold>0hard/1medium/*soft</unimprovedScoreDifferenceThreshold>
+  </termination>
+
+  <!-- Algorithms / phases -->
+
+  <constructionHeuristic>
+    <queuedEntityPlacer>
+      <entitySelector id="placerEntitySelector">
+        <entityClass>se.ltu.alb.equip.model.Task</entityClass>
+        <cacheType>PHASE</cacheType>
+        <selectionOrder>SORTED</selectionOrder>
+        <sorterManner>DECREASING_DIFFICULTY</sorterManner>
+      </entitySelector>
+      <changeMoveSelector>
+        <entitySelector mimicSelectorRef="placerEntitySelector"/>
+        <filterClass>se.ltu.alb.equip.EarlyLateChangeMoveFilter</filterClass>
+      </changeMoveSelector>
+    </queuedEntityPlacer>
+  </constructionHeuristic>
+
+  <customPhase>
+    <customPhaseCommandClass>se.ltu.alb.equip.algo.ShowWorkingSolution</customPhaseCommandClass>
+    <customProperties>
+      <property name="verbose" value="false" />
+    </customProperties>
+  </customPhase>
+
+  <customPhase>
+    <customPhaseCommandClass>se.ltu.alb.equip.algo.CheckFeasibility</customPhaseCommandClass>
+    <customProperties>
+      <property name="verbose" value="true" />
+      <property name="assertFeasible" value="true" />
+    </customProperties>
+  </customPhase>
+
+  <localSearch>
+    <localSearchType>LATE_ACCEPTANCE</localSearchType>
+    <unionMoveSelector>
+      <changeMoveSelector>
+        <entitySelector id="taskSelector1">
+          <entityClass>se.ltu.alb.equip.model.Task</entityClass>
+          <cacheType>PHASE</cacheType>
+        </entitySelector>
+        <valueSelector>
+          <nearbySelection>
+            <originEntitySelector mimicSelectorRef="taskSelector1" />
+            <nearbyDistanceMeterClass>se.ltu.alb.equip.algo.TaskStationDistance</nearbyDistanceMeterClass>
+            <parabolicDistributionSizeMaximum>300</parabolicDistributionSizeMaximum>
+          </nearbySelection>
+        </valueSelector>
+        <filterClass>se.ltu.alb.equip.EarlyLateChangeMoveFilter</filterClass>
+      </changeMoveSelector>
+      <swapMoveSelector>
+        <entitySelector id="taskSel2">
+          <entityClass>se.ltu.alb.equip.model.Task</entityClass>
+          <cacheType>PHASE</cacheType>
+        </entitySelector>
+        <secondaryEntitySelector>
+          <entityClass>se.ltu.alb.equip.model.Task</entityClass>
+          <nearbySelection>
+            <originEntitySelector mimicSelectorRef="taskSel2" />
+            <nearbyDistanceMeterClass>se.ltu.alb.equip.algo.TaskTaskDistance</nearbyDistanceMeterClass>
+            <linearDistributionSizeMaximum>160</linearDistributionSizeMaximum>
+          </nearbySelection>
+        </secondaryEntitySelector>
+      </swapMoveSelector>
+    </unionMoveSelector>
+  </localSearch>
+
+</solver>
