@@ -43,7 +43,10 @@ public class Demo {
 
         // This uses the default config (whatever that is), which currently
         // runs for 1 minute.
-        problem = planner.solve(problem);
+        //problem = planner.solve(problem);
+        // These specify an XML config. Both finish in negligible time.
+        problem = planner.solve(problem, "configs/salbp1-config3-first_feasible.xml");
+        //problem = planner.solve(problem, "configs/salbp1-config9-unimproved.xml");
         System.out.println("Score: " + problem.score());
     }
 
@@ -73,7 +76,7 @@ public class Demo {
         var builder = AlbBuilder.albBuilder();
 
         // Loop over task IDs.
-        for (int i = 0; i < taskTimes.size(); i++) {
+        for (int i = 0; i < ntasks; i++) {
             var deps = taskDependencies.get(i);
             for (final var dep : deps) {
                 builder.taskDependency(i, dep);   // add one dependency for task i
@@ -82,7 +85,7 @@ public class Demo {
 
         // Put task times in a map.
         Map<Integer, Integer> taskTimesMap = new HashMap<>();
-        for (int i = 0; i < taskTimes.size(); i++) {
+        for (int i = 0; i < ntasks; i++) {
             taskTimesMap.put(i, taskTimes.get(i));
         }
         builder.taskTimes(taskTimesMap);    // set all task times
@@ -100,12 +103,12 @@ public class Demo {
     public static AssemblyPlan usingAlbInstanceDirectly() {
         // Put task times in a map.
         Map<Integer, Integer> taskTimesMap = new HashMap<>();
-        for (int i = 0; i < taskTimes.size(); i++) {
+        for (int i = 0; i < ntasks; i++) {
             taskTimesMap.put(i, taskTimes.get(i));
         }
         // Put dependencise in a map.
         Map<Integer, Collection<Integer>> taskDependenciesMap = new HashMap<>();
-        for (int i = 0; i < taskTimes.size(); i++) {
+        for (int i = 0; i < ntasks; i++) {
             taskDependenciesMap.put(i, taskDependencies.get(i));
         }
 

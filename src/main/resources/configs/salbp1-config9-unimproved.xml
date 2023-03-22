@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+config8 + strip unused stations
+NOTE: is supposed to use m=n stations (one per task)
+This cannot be configured from the outside but must be hard-coded.
+
+This version also uses a best score limit and an unimproved limit.
+The medium score (number of stations) must improve at least every 2
+minutes. Also, as soon as a score within 5 % of the lower bound is
+found, solving stops.
+-->
+<solver>
+  <!-- Domain model configuration -->
+  <solutionClass>se.ltu.alb.salbp.model.AssemblyPlan</solutionClass>
+  <entityClass>se.ltu.alb.salbp.model.Step</entityClass>
+
+  <moveThreadCount>NONE</moveThreadCount>
+
+  <!-- Score configuration -->
+  <scoreDirectorFactory>
+    <incrementalScoreCalculatorClass>se.ltu.alb.salbp1.score.IncrementalCalculator</incrementalScoreCalculatorClass>
+    <!-- This is needed to make the best score limit work. (See termination below.) -->
+    <incrementalScoreCalculatorCustomProperties>
+      <property name="lowerBoundMarginFactor" value="1.05" />
+    </incrementalScoreCalculatorCustomProperties>
+  </scoreDirectorFactory>
+
+  <!-- Global termination -->
+  <termination>
+    <!-- Hard upper limit on the running time. -->
+    <minutesSpentLimit>30</minutesSpentLimit>
+    <!-- 2 minutes unimproved MEDIUM score. -->
+    <unimprovedMinutesSpentLimit>2</unimprovedMinutesSpentLimit>
+    <unimprovedScoreDifferenceThreshold>0hard/1medium/*soft</unimprovedScoreDifferenceThreshold>
+    <!-- Stop when we find a solution that uses 0 stations relative to upper bound. -->
+    <bestScoreLimit>0hard/0medium/*soft</bestScoreLimit>
+  </termination>
+
+  <!-- Algorithms / phases -->
+
+  <constructionHeuristic>
+    <constructionHeuristicType>FIRST_FIT_DECREASING</constructionHeuristicType>
+    <forager>
+      <pickEarlyType>FIRST_FEASIBLE_SCORE</pickEarlyType>
+    </forager>
+  </constructionHeuristic>
+
+  <customPhase>
+    <customPhaseCommandClass>se.ltu.alb.salbp.algo.StripUnusedStations</customPhaseCommandClass>
+    <customProperties>
+      <property name="leave" value="10" />
+    </customProperties>
+  </customPhase>
+
+  <localSearch>
+    <localSearchType>LATE_ACCEPTANCE</localSearchType>
+    <unionMoveSelector>
+      <changeMoveSelector>
+        <entitySelector id="taskSel" />
+        <valueSelector>
+          <nearbySelection>
+            <originEntitySelector mimicSelectorRef="taskSel" />
+            <nearbyDistanceMeterClass>se.ltu.alb.salbp.algo.TaskStationDistance</nearbyDistanceMeterClass>
+            <parabolicDistributionSizeMaximum>300</parabolicDistributionSizeMaximum>
+          </nearbySelection>
+        </valueSelector>
+        <filterClass>se.ltu.alb.salbp.algo.EarlyLateChangeMoveFilter</filterClass>
+      </changeMoveSelector>
+      <swapMoveSelector>
+        <entitySelector id="taskSel2" />
+        <secondaryEntitySelector>
+          <nearbySelection>
+            <originEntitySelector mimicSelectorRef="taskSel2" />
+            <nearbyDistanceMeterClass>se.ltu.alb.salbp.algo.TaskTaskDistance</nearbyDistanceMeterClass>
+            <linearDistributionSizeMaximum>160</linearDistributionSizeMaximum>
+          </nearbySelection>
+        </secondaryEntitySelector>
+      </swapMoveSelector>
+    </unionMoveSelector>
+  </localSearch>
+
+</solver>
