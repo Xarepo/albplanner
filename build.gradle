@@ -1,0 +1,40 @@
+plugins {
+  id 'com.scuilion.syntastic' version '0.3.9'
+}
+
+apply plugin: 'java'
+
+repositories {
+  jcenter()
+  mavenCentral()
+}
+
+dependencies {
+  implementation 'ch.rfin.java-util:pair:1.1.0'
+  implementation 'org.optaplanner:optaplanner-core:8.23.0.Final'
+  implementation 'org.optaplanner:optaplanner-benchmark:8.23.0.Final'
+  testImplementation 'org.optaplanner:optaplanner-test:8.23.0.Final'
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+  testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+  testImplementation 'org.spockframework:spock-core:2.2-M1-groovy-4.0'
+  implementation 'org.mockito:mockito-core:4.6.1'
+  implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.11'
+  //implementation files('lib/streams.jar', 'lib/predicates.jar', 'lib/misc.jar', 'lib/alb-util.jar', 'lib/optaplanner-util.jar')
+  //implementation files('lib/predicates.jar', 'lib/optaplanner-util.jar')
+  //implementation files('lib/predicates.jar', 'lib/optaplanner-util.jar', 'lib/moop.jar')
+  //annotationProcessor files('lib/moop.jar')
+  //implementation files('lib/optaplanner-util.jar')
+}
+
+compileJava {
+    //options.compilerArgs << '-nowarn'
+    //options.compilerArgs << '-Xlint:removal'
+    options.compilerArgs << '-Xlint:all'
+    //options.compilerArgs << '-proc:only'
+    //options.compilerArgs << '-processor:ch.rfin.annotations.MoopProcessor'
+}
+
+task run(type: JavaExec) {
+  classpath = sourceSets.main.runtimeClasspath
+  main = 'se.ltu.alb.salbp2.Main'
+}
