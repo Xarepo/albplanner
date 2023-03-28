@@ -22,8 +22,6 @@ public class Main {
 
     public static void main(String[] args) throws IOException, InterruptedException {
         System.out.println("Entering API");
-
-        SALBPlan1 planner = new SALBPlan1();
         
         HttpServer server = HttpServer.create(new InetSocketAddress(3001), 0);
         server.createContext("/salbp", (exchange -> {
@@ -52,9 +50,20 @@ public class Main {
                     }
                 }
 
-                AssemblyPlan problem = Main.usingAlbBuilder(taskTimes, taskDependencies, jsonObject.getInt("cycleTime"), jsonObject.getInt("noStations"));
+                int cycleTime = jsonObject.getInt("cycleTime");
+                int noStations = jsonObject.getInt("noStations");
 
-                JSONObject responseText = getResult(planner.solve(problem));
+                AssemblyPlan problem = Main.usingAlbBuilder(taskTimes, taskDependencies, cycleTime, noStations);
+ 
+                JSONObject responseText;
+                if (cycleTime == 0) {
+                    SALBPlan2 planner = new SALBPlan2();
+                    responseText = getResult(planner.solve(problem));
+                } else {
+                    SALBPlan1 planner = new SALBPlan1();
+                    responseText = getResult(planner.solve(problem));
+                }
+
 
                 exchange.sendResponseHeaders(200, responseText.toString().getBytes().length);
                 OutputStream output = exchange.getResponseBody();
