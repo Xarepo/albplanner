@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+config2 + early picking.
+NOTE: is supposed to use m=n stations (one per task)
+This cannot be configured from the outside but must be hard-coded.
+
+This version uses a best score feasible limit.
+As soon as we find a feasible solution, we're done.
+The time limit is practically irrelevant.
+-->
+<solver>
+  <!-- Domain model configuration -->
+  <solutionClass>se.ltu.alb.salbp.model.AssemblyPlan</solutionClass>
+  <entityClass>se.ltu.alb.salbp.model.Step</entityClass>
+
+  <!-- Score configuration -->
+  <scoreDirectorFactory>
+    <easyScoreCalculatorClass>se.ltu.alb.salbp1.score.HardSoftInline</easyScoreCalculatorClass>
+  </scoreDirectorFactory>
+
+  <!-- Global termination -->
+  <termination>
+    <minutesSpentLimit>1</minutesSpentLimit>
+    <bestScoreFeasible>true</bestScoreFeasible>
+  </termination>
+
+  <!-- Algorithms / phases -->
+
+  <constructionHeuristic>
+    <constructionHeuristicType>FIRST_FIT_DECREASING</constructionHeuristicType>
+    <forager>
+      <pickEarlyType>FIRST_FEASIBLE_SCORE</pickEarlyType>
+    </forager>
+  </constructionHeuristic>
+
+  <localSearch>
+    <localSearchType>HILL_CLIMBING</localSearchType>
+  </localSearch>
+
+</solver>
