@@ -38,7 +38,6 @@ public class Demo {
 
         //AssemblyPlan problem = usingAssemblyPlanDirectly();
         //AssemblyPlan problem = usingAlbInstanceDirectly();
-        //AssemblyPlan problem = usingAlbBuilder();
         AssemblyPlan problem = usingAlbBuilder_alt();
 
         // This uses the default config (whatever that is), which currently
@@ -48,9 +47,18 @@ public class Demo {
         problem = planner.solve(problem, "configs/salbp1-config3-first_feasible.xml");
         //problem = planner.solve(problem, "configs/salbp1-config9-unimproved.xml");
         System.out.println("Score: " + problem.score());
+
+
+        // Now solve SALBP-2.
+
+        SALBPlan2 planner2 = new SALBPlan2();
+        problem = usingAlbBuilder();
+        problem = planner.solve(problem, "configs/salbp2-bf.xml");
+        System.out.println("Score: " + problem.score());
     }
 
 
+    // NOTE: Builds a type-2 instance!
     // This is probably the easiest/simplest method.
     public static AssemblyPlan usingAlbBuilder() {
         var builder = AlbBuilder.albBuilder();
@@ -62,9 +70,9 @@ public class Demo {
         }
 
         // For a SALBP-1 instance, we would need a limit on the cycle time
-        builder.cycleTime(1234);
+        //builder.cycleTime(1234);
         // For a SALBP-2 instance, we would need a limit on the number of stations
-        //builder.stations(10);
+        builder.stations(10);
 
         // Build AlbInstance and convert to AssemblyPlan.
         return AssemblyPlan.fromAlb(builder.buildValid());

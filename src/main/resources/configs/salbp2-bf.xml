@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Uses a custom phase command as a custom construction heuristic.
+Limits the local search phase to 5 seconds.
+-->
+<solver>
+  <!-- Domain model configuration -->
+  <solutionClass>se.ltu.alb.salbp.model.AssemblyPlan</solutionClass>
+  <entityClass>se.ltu.alb.salbp.model.Step</entityClass>
+
+  <!-- Score configuration -->
+  <scoreDirectorFactory>
+    <easyScoreCalculatorClass>se.ltu.alb.salbp2.score.HardMediumSoftInline</easyScoreCalculatorClass>
+  </scoreDirectorFactory>
+
+  <!-- Global termination -->
+  <termination>
+    <minutesSpentLimit>1</minutesSpentLimit>
+  </termination>
+
+  <!-- Algorithms / phases -->
+
+  <customPhase>
+    <customPhaseCommandClass>se.ltu.alb.salbp2.algo.BreadthFirstConstruction</customPhaseCommandClass>
+    <customProperties>
+      <property name="algorithm" value="bf2b" />
+    </customProperties>
+  </customPhase>
+
+  <localSearch>
+    <localSearchType>HILL_CLIMBING</localSearchType>
+    <termination>
+      <secondsSpentLimit>5</secondsSpentLimit>
+    </termination>
+  </localSearch>
+
+</solver>

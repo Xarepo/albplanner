@@ -7,12 +7,14 @@ import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftL
 import se.ltu.alb.salbp.model.*;
 
 /**
- * Straightforward SALBP-2 score calculator.
- * Hard score is dependency inversions; medium score is cycle time.
- * (Soft level is always 0.)
+ * Like {@link se.ltu.alb.salbp2.score.HardSoftInline}, but uses squared
+ * station times for the soft score.
+ * Hard: precedence violations. Medium: cycle time. Soft: sum of squared
+ * station times.
+ * 
  * @author Christoffer Fink
  */
-public class HardSoftInline implements EasyScoreCalculator<AssemblyPlan, HardMediumSoftLongScore> {
+public class HardMediumSoftInline implements EasyScoreCalculator<AssemblyPlan, HardMediumSoftLongScore> {
 
     @Override
     public HardMediumSoftLongScore calculateScore(AssemblyPlan plan) {
@@ -37,15 +39,18 @@ public class HardSoftInline implements EasyScoreCalculator<AssemblyPlan, HardMed
             stationTimes.put(stationNr, stationTime + task.time());
         }
         int cycleTime = 0;
+        long sumSquaredTimes = 0;
         for (final var stationTime : stationTimes.values()) {
             if (stationTime > cycleTime) {
                 cycleTime = stationTime;
             }
+            sumSquaredTimes += stationTime * stationTime;
         }
 
         final int hard = -dependencyInversions;
         final int medium = -cycleTime;
-        return HardMediumSoftLongScore.of(hard, medium, 0);
+        final long soft = -sumSquaredTimes;
+        return HardMediumSoftLongScore.of(hard, medium, soft);
     }
 
 }
