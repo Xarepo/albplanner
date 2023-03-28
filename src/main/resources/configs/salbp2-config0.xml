@@ -15,7 +15,7 @@ Uses no clever optimizations.
 
   <!-- Global termination -->
   <termination>
-    <minutesSpentLimit>1</minutesSpentLimit>
+    <secondsSpentLimit>30</secondsSpentLimit>
   </termination>
 
   <!-- Algorithms / phases -->
