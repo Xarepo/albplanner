@@ -1,0 +1,21 @@
+version: "3"
+
+services:
+  albepdess_solver:
+    container_name: albepdess_solver
+    image: albepdess_solver
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    restart: always
+    networks:
+      - albepdess_db_dev_network
+    ports:
+      - "3001:3001"
+    volumes:
+      - "./:/app"
+    command: ["gradle", "run"]
+
+networks:
+  albepdess_db_dev_network:
+    external: true

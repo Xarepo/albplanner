@@ -18,6 +18,7 @@ dependencies {
   testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
   testImplementation 'org.spockframework:spock-core:2.2-M1-groovy-4.0'
   implementation 'org.mockito:mockito-core:4.6.1'
+  implementation 'org.json:json:20211205'
   implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.11'
   //implementation files('lib/streams.jar', 'lib/predicates.jar', 'lib/misc.jar', 'lib/alb-util.jar', 'lib/optaplanner-util.jar')
   //implementation files('lib/predicates.jar', 'lib/optaplanner-util.jar')
@@ -36,5 +37,5 @@ compileJava {
 
 task run(type: JavaExec) {
   classpath = sourceSets.main.runtimeClasspath
-  main = 'se.ltu.alb.salbp2.Main'
+  main = 'se.ltu.alb.Main'
 }

@@ -25,3 +25,5 @@ hs_err_pid*
 .vscode
 bin
 build
+.syntastic_javac_config
+.syntastic_javac_config

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+config8 + strip unused stations
+NOTE: is supposed to use m=n stations (one per task)
+This cannot be configured from the outside but must be hard-coded.
+-->
+<solver>
+  <!-- Domain model configuration -->
+  <solutionClass>se.ltu.alb.salbp.model.AssemblyPlan</solutionClass>
+  <entityClass>se.ltu.alb.salbp.model.Step</entityClass>
+
+  <moveThreadCount>NONE</moveThreadCount>
+
+  <!-- Score configuration -->
+  <scoreDirectorFactory>
+    <incrementalScoreCalculatorClass>se.ltu.alb.salbp1.score.IncrementalCalculator</incrementalScoreCalculatorClass>
+  </scoreDirectorFactory>
+
+  <!-- Global termination -->
+  <termination>
+    <minutesSpentLimit>0</minutesSpentLimit>
+    <secondsSpentLimit>30</secondsSpentLimit>
+  </termination>
+
+  <!-- Algorithms / phases -->
+
+  <constructionHeuristic>
+    <constructionHeuristicType>FIRST_FIT_DECREASING</constructionHeuristicType>
+    <forager>
+      <pickEarlyType>FIRST_FEASIBLE_SCORE</pickEarlyType>
+    </forager>
+  </constructionHeuristic>
+
+  <customPhase>
+    <customPhaseCommandClass>se.ltu.alb.salbp.algo.StripUnusedStations</customPhaseCommandClass>
+    <customProperties>
+      <property name="leave" value="10" />
+    </customProperties>
+  </customPhase>
+
+  <localSearch>
+    <localSearchType>LATE_ACCEPTANCE</localSearchType>
+    <unionMoveSelector>
+      <changeMoveSelector>
+        <entitySelector id="taskSel" />
+        <valueSelector>
+          <nearbySelection>
+            <originEntitySelector mimicSelectorRef="taskSel" />
+            <nearbyDistanceMeterClass>se.ltu.alb.salbp.algo.TaskStationDistance</nearbyDistanceMeterClass>
+            <parabolicDistributionSizeMaximum>300</parabolicDistributionSizeMaximum>
+          </nearbySelection>
+        </valueSelector>
+        <filterClass>se.ltu.alb.salbp.algo.EarlyLateChangeMoveFilter</filterClass>
+      </changeMoveSelector>
+      <swapMoveSelector>
+        <entitySelector id="taskSel2" />
+        <secondaryEntitySelector>
+          <nearbySelection>
+            <originEntitySelector mimicSelectorRef="taskSel2" />
+            <nearbyDistanceMeterClass>se.ltu.alb.salbp.algo.TaskTaskDistance</nearbyDistanceMeterClass>
+            <linearDistributionSizeMaximum>160</linearDistributionSizeMaximum>
+          </nearbySelection>
+        </secondaryEntitySelector>
+      </swapMoveSelector>
+    </unionMoveSelector>
+  </localSearch>
+</solver>

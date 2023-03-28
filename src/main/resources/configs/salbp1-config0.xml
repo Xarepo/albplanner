@@ -17,8 +17,8 @@ This cannot be configured from the outside but must be hard-coded.
 
   <!-- Global termination -->
   <termination>
-    <minutesSpentLimit>1</minutesSpentLimit>
-    <secondsSpentLimit>0</secondsSpentLimit>
+    <minutesSpentLimit>0</minutesSpentLimit>
+    <secondsSpentLimit>30</secondsSpentLimit>
   </termination>
 
   <!-- Algorithms / phases -->
